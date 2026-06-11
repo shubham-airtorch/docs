@@ -1,0 +1,70 @@
+name: Publish Doc from S3
+
+# Triggered by an external repository_dispatch event (e.g. from MainWebServer).
+# The caller sends a public file_url plus where the page should live in the docs.
+on:
+  repository_dispatch:
+    types: [publish-doc]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout docs repo
+        uses: actions/checkout@v4
+
+      - name: Validate payload
+        env:
+          FILE_URL: ${{ github.event.client_payload.file_url }}
+          TARGET_PATH: ${{ github.event.client_payload.target_path }}
+          NAV_GROUP: ${{ github.event.client_payload.nav_group }}
+        run: |
+          set -euo pipefail
+          : "${FILE_URL:?file_url is required}"
+          : "${TARGET_PATH:?target_path is required}"
+          : "${NAV_GROUP:?nav_group is required}"
+          # Reject path traversal / absolute paths.
+          case "$TARGET_PATH" in
+            /*|*..*) echo "Invalid target_path: $TARGET_PATH" >&2; exit 1 ;;
+          esac
+
+      - name: Download markdown from public URL
+        env:
+          FILE_URL: ${{ github.event.client_payload.file_url }}
+          TARGET_PATH: ${{ github.event.client_payload.target_path }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$TARGET_PATH")"
+          curl -fSL "$FILE_URL" -o "$TARGET_PATH"
+          echo "Downloaded to $TARGET_PATH"
+
+      - name: Update navigation
+        env:
+          TARGET_PATH: ${{ github.event.client_payload.target_path }}
+          NAV_GROUP: ${{ github.event.client_payload.nav_group }}
+        run: python3 scripts/update_nav.py "$TARGET_PATH" "$NAV_GROUP"
+
+      - name: Validate docs
+        run: |
+          set -euo pipefail
+          npm install -g mint
+          mint broken-links
+
+      - name: Commit and push
+        env:
+          TARGET_PATH: ${{ github.event.client_payload.target_path }}
+          COMMIT_MESSAGE: ${{ github.event.client_payload.commit_message }}
+        run: |
+          set -euo pipefail
+          git config user.name "docs-bot"
+          git config user.email "docs-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          MSG="${COMMIT_MESSAGE:-docs: publish ${TARGET_PATH} via API}"
+          git commit -m "$MSG"
+          git push
