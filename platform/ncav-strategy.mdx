@@ -1,0 +1,131 @@
+---
+title: "Benjamin Graham NCAV/MV Strategy"
+description: "A Graham-inspired net current asset value strategy for selecting balance-sheet-strong S&P 500 stocks."
+date: "2026-06-11"
+strategy: "NCAV/MV"
+venue: "ALPACA_PAPER"
+allocation: "$1,000"
+max_drawdown: "20%"
+---
+
+# Benjamin Graham NCAV/MV Strategy
+
+## Introduction
+
+The **Net Current Asset Value to Market Value** strategy, commonly known as the **NCAV/MV strategy**, is a classic deep-value approach associated with Benjamin Graham. Graham defined net current asset value as:
+
+$$
+NCAV = Current\ Assets - Total\ Liabilities
+$$
+
+On a per-share basis:
+
+$$
+NCAV\ per\ share = rac{Current\ Assets - Total\ Liabilities}{Shares\ Outstanding}
+$$
+
+The strict Graham rule looks for companies trading below liquidation-style value, meaning:
+
+$$
+Market\ Value < NCAV
+$$
+
+or equivalently:
+
+$$
+NCAV/MV > 1.0
+$$
+
+The original strategy was designed for deep-value opportunities, typically among smaller companies. In the modern S&P 500 universe, true NCAV stocks are rare because large-cap companies usually trade far above liquidation value. Therefore, this implementation uses a **Graham-inspired ranking approach**: select the S&P 500 stocks with the highest NCAV/MV ratios.
+
+## Procedure
+
+The live strategy is implemented as an automated trading agent on **ALPACA_PAPER**.
+
+### Configuration
+
+- **Venue:** ALPACA_PAPER
+- **Allocated capital:** $1,000
+- **Maximum drawdown limit:** 20%
+- **Universe:** Current S&P 500 constituents
+- **Portfolio size:** Top 10 stocks
+- **Weighting:** Equal-weighted
+- **Rebalancing frequency:** Monthly
+- **Selection metric:** Highest NCAV/MV ratio
+
+### Monthly Process
+
+1. Fetch the current S&P 500 constituents.
+2. Pull latest available fundamental data for each stock:
+   - Current assets
+   - Total liabilities
+   - Basic shares outstanding
+   - Market capitalization
+3. Compute:
+
+   $$
+   NCAV = Current\ Assets - Total\ Liabilities
+   $$
+
+   $$
+   NCAV/MV = rac{NCAV}{Market\ Capitalization}
+   $$
+
+4. Exclude companies without meaningful current-assets data, primarily banks, insurers, REITs, and other financial firms where NCAV is not economically comparable.
+5. Rank remaining stocks by NCAV/MV from highest to lowest.
+6. Select the top 10 stocks.
+7. Rebalance the portfolio to equal weights.
+8. The strategy pauses automatically if drawdown exceeds the configured 20% maximum loss threshold.
+
+## Results
+
+### Historical Backtest Summary
+
+The strategy was backtested on the S&P 500 universe from 2020 to 2026 using the top 10 stocks by NCAV/MV ratio.
+
+| Metric | NCAV/MV Strategy | S&P 500 / SPY |
+|---|---:|---:|
+| Total Return | 409.75% | 165.42% |
+| Annualized Return | 31.07% | 17.60% |
+| Annualized Volatility | 28.71% | 17.82% |
+| Sharpe Ratio | 1.08 | 0.99 |
+| Max Drawdown | -43.27% | -25.36% |
+
+### Live Strategy Snapshot
+
+The most recent live screen found that no S&P 500 stocks met Graham’s strict criterion of **NCAV/MV > 1.0**. The strategy therefore selected the highest-ranking stocks by NCAV/MV.
+
+Recent top-ranked holdings included:
+
+| Rank | Ticker | NCAV/MV |
+|---:|---|---:|
+| 1 | SMCI | 0.292 |
+| 2 | EPAM | 0.202 |
+| 3 | MRNA | 0.182 |
+| 4 | TTD | 0.177 |
+| 5 | CPRT | 0.153 |
+| 6 | COIN | 0.138 |
+| 7 | INCY | 0.136 |
+| 8 | XYZ | 0.134 |
+| 9 | REGN | 0.110 |
+| 10 | DECK | 0.108 |
+
+### Interpretation
+
+The historical results were strong, with the NCAV/MV ranking strategy outperforming SPY over the test period. However, the strategy also had materially higher volatility and deeper drawdowns. This is consistent with a concentrated value-oriented portfolio.
+
+The strategy is currently configured with a smaller live paper allocation of **$1,000** and a **20% max drawdown limit**, which should help contain downside risk during adverse market environments.
+
+## Conclusion
+
+The implemented strategy is best understood as a **Graham-inspired large-cap balance-sheet value strategy**, not a pure Graham net-net strategy. In the modern S&P 500, companies rarely trade below net current asset value, so the system ranks companies by relative NCAV strength rather than requiring strict liquidation-value discounts.
+
+Key takeaways:
+
+- The strict Graham criterion is rarely satisfied in the S&P 500.
+- The modified ranking approach historically produced strong returns from 2020 to 2026.
+- The strategy tends to select companies with relatively strong current assets and lower liability burdens.
+- The approach carries higher volatility and drawdown risk than SPY.
+- The live agent trades through ALPACA_PAPER with $1,000 allocated and a 20% max drawdown limit.
+
+This strategy may be most useful as a systematic balance-sheet-value sleeve within a broader portfolio, rather than as a standalone all-weather investment strategy.

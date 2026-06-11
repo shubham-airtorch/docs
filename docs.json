@@ -16,7 +16,13 @@
     "eyebrows": "breadcrumbs"
   },
   "contextual": {
-    "options": ["copy", "view", "assistant", "mcp", "add-mcp"]
+    "options": [
+      "copy",
+      "view",
+      "assistant",
+      "mcp",
+      "add-mcp"
+    ]
   },
   "navigation": {
     "global": {
@@ -49,7 +55,8 @@
           "platform/key-concepts",
           "platform/configuration/settings",
           "platform/configuration/user-management",
-          "platform/administration/roles-permissions"
+          "platform/administration/roles-permissions",
+          "platform/ncav-strategy"
         ]
       },
       {
