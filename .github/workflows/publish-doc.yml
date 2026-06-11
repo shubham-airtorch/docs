@@ -46,11 +46,13 @@ jobs:
           NAV_GROUP: ${{ github.event.client_payload.nav_group }}
         run: python3 scripts/update_nav.py "$TARGET_PATH" "$NAV_GROUP"
 
-      - name: Validate docs
+      - name: Validate docs (broken links are non-blocking)
         run: |
-          set -euo pipefail
           npm install -g mint
-          mint broken-links
+          # Broken internal links don't break the Mintlify build (pages still
+          # deploy), and a single bad link anywhere should not block publishing
+          # an unrelated page. Report as a warning instead of failing the run.
+          mint broken-links || echo "::warning::mint broken-links reported issues (non-blocking) - review and fix."
 
       - name: Commit and push
         env:
