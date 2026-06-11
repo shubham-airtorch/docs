@@ -41,7 +41,8 @@
         "icon": "chart-line",
         "expanded": true,
         "pages": [
-          "strategies/ncav-strategy"
+          "strategies/ncav-strategy",
+          "strategies/polymarket-most-active-markets"
         ]
       }
     ]
