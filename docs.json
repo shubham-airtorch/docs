@@ -42,7 +42,8 @@
         "expanded": true,
         "pages": [
           "strategies/ncav-strategy",
-          "strategies/polymarket-most-active-markets"
+          "strategies/polymarket-most-active-markets",
+          "strategies/fed-rate-cuts-last-5-years"
         ]
       }
     ]
