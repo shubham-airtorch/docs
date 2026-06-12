@@ -7,13 +7,13 @@ description: "A short visual read on how the Fed eased policy over the last five
 
 The Fed's easing cycle was not a drift — it was a sequence of deliberate steps. Over the last five years, the **upper bound of the target range fell by 175 basis points** across **6 cuts**, moving from the peak-policy era into a measured easing regime.
 
-![Fed target rate path](None)
+![Fed target rate path](https://sf-viewer.s3.us-east-1.amazonaws.com/932c49bb-ffe4-4601-aab6-6c7be30152b6.svg)
 
 ## The Signal
 
 The first cut was the loudest: **50 bps on 2024-09-19**. After that, the Fed shifted into smaller, repeated 25 bp moves — a pattern that says: ease, but do not panic.
 
-![Fed cut sizes](None)
+![Fed cut sizes](https://sf-viewer.s3.us-east-1.amazonaws.com/4afa5ee0-e679-4986-a0eb-40c01bb50ccf.svg)
 
 ## Cut Timeline
 
